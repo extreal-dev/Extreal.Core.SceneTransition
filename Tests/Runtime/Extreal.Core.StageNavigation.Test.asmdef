@@ -1,10 +1,10 @@
 {
-    "name": "Extreal.Core.SceneTransition.Test",
-    "rootNamespace": "Extreal.Core.SceneTransition.Test",
+    "name": "Extreal.Core.StageNavigation.Test",
+    "rootNamespace": "Extreal.Core.StageNavigation.Test",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Extreal.Core.SceneTransition",
+        "Extreal.Core.StageNavigation",
         "UniTask",
         "Extreal.Core.Logging"
     ],
