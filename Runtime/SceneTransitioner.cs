@@ -6,128 +6,109 @@ using UnityEngine.SceneManagement;
 
 namespace Extreal.Core.SceneTransition
 {
-    public class SceneTransitioner<TScene, TPage> : ISceneTransitioner<TPage>
-        where TScene : struct
+    public class SceneTransitioner<TPage, TScene> : ISceneTransitioner<TScene>
         where TPage : struct
+        where TScene : struct
     {
-        public event Action<TPage> OnPageChanged;
+        public event Action<TScene> OnSceneChanged;
 
-        private Dictionary<TPage, TScene[]> _pageMap = new Dictionary<TPage, TScene[]>();
-        private Stack<TPage> _pageHistory = new Stack<TPage>();
-        private List<TScene> _loadedScenes = new List<TScene>();
+        private Dictionary<TScene, TPage[]> _sceneMap = new Dictionary<TScene, TPage[]>();
+        private Stack<TScene> _sceneHistory = new Stack<TScene>();
+        private List<TPage> _loadedPages = new List<TPage>();
+        private bool _initialTransition = true;
+        private TScene _currentScene;
 
-        public SceneTransitioner(SceneTransitionConfiguration configuration)
+        public SceneTransitioner(ISceneTransitionConfiguration<TPage, TScene> configuration)
         {
-            foreach (var page in configuration._pages)
+            foreach (var scene in configuration.Scenes)
             {
-                if (EnumTryParseAndIsDefined<TPage>(page._pageName, out var pageEnum))
-                {
-                    var pageScenes = new List<TScene>();
-                    foreach (var sceneName in page._sceneNames)
-                    {
-                        if (EnumTryParseAndIsDefined<TScene>(sceneName, out var sceneEnum))
-                        {
-                            pageScenes.Add(sceneEnum);
-                        }
-                    }
-                    _pageMap[pageEnum] = pageScenes.ToArray();
-                }
+                _sceneMap[scene._sceneName] = scene._pageNames.ToArray();
             }
 
-            foreach (var permanentName in configuration._permanentNames)
+            foreach (var permanentName in configuration.PermanentNames)
             {
-                if (EnumTryParseAndIsDefined<TScene>(permanentName, out var _))
-                {
-                    _ = SceneManager.LoadSceneAsync(permanentName);
-                }
+                _ = SceneManager.LoadSceneAsync(permanentName.ToString());
             }
         }
 
-        public async UniTask ReplaceAsync(TPage page)
+        public async UniTask ReplaceAsync(TScene scene)
         {
-            if (_pageHistory.Count > 0)
+            if (_initialTransition)
             {
-                _pageHistory.Pop();
+                _initialTransition = false;
             }
-            _pageHistory.Push(page);
 
-            await UnloadScenesAsync(page);
-            await LoadScenesAsync(page);
+            await UnloadScenesAsync(scene);
+            await LoadScenesAsync(scene);
 
-            OnPageChanged?.Invoke(page);
+            _currentScene = scene;
+            OnSceneChanged?.Invoke(_currentScene);
         }
 
-        public async UniTask PushAsync(TPage page)
+        public async UniTask PushAsync(TScene scene)
         {
-            _pageHistory.Push(page);
+            if (!_initialTransition)
+            {
+                _sceneHistory.Push(_currentScene);
+            }
+            else
+            {
+                _initialTransition = false;
+            }
 
-            await UnloadScenesAsync(page);
-            await LoadScenesAsync(page);
+            await UnloadScenesAsync(scene);
+            await LoadScenesAsync(scene);
 
-            OnPageChanged?.Invoke(page);
+            _currentScene = scene;
+            OnSceneChanged?.Invoke(_currentScene);
         }
 
         public async UniTask PopAsync()
         {
-            if (_pageHistory.Count == 0)
+            if (_sceneHistory.Count == 0)
             {
                 return;
             }
 
-            var page = _pageHistory.Pop();
-            await UnloadScenesAsync(page);
-            await LoadScenesAsync(page);
+            _currentScene = _sceneHistory.Pop();
+            await UnloadScenesAsync(_currentScene);
+            await LoadScenesAsync(_currentScene);
 
-            OnPageChanged?.Invoke(page);
+            OnSceneChanged?.Invoke(_currentScene);
         }
 
         public void Reset()
         {
-            _pageHistory.Clear();
+            _sceneHistory.Clear();
         }
 
-        private async UniTask UnloadScenesAsync(TPage page)
+        private async UniTask UnloadScenesAsync(TScene scene)
         {
-            var syncOps = new List<UnityEngine.AsyncOperation>();
-            for (var i = _loadedScenes.Count - 1; i >= 0; i--)
+            var asyncOps = new List<UnityEngine.AsyncOperation>();
+            for (var i = _loadedPages.Count - 1; i >= 0; i--)
             {
-                var sceneEnum = _loadedScenes[i];
-                if (!_pageMap[page].Contains(sceneEnum))
+                var pageEnum = _loadedPages[i];
+                if (!_sceneMap[scene].Contains(pageEnum))
                 {
-                    var syncOp = SceneManager.UnloadSceneAsync(sceneEnum.ToString());
-                    syncOps.Add(syncOp);
-                    _loadedScenes.RemoveAt(i);
+                    var asyncOp = SceneManager.UnloadSceneAsync(pageEnum.ToString());
+                    asyncOps.Add(asyncOp);
+                    _loadedPages.RemoveAt(i);
                 }
             }
 
-            await UniTask.WaitUntil(() =>
-            {
-                var isDone = true;
-                for (var i = syncOps.Count - 1; i >= 0; i--)
-                {
-                    if (syncOps[i].isDone)
-                    {
-                        syncOps.RemoveAt(i);
-                    }
-                    else
-                    {
-                        isDone = false;
-                    }
-                }
-                return isDone;
-            });
+            await UniTask.WaitUntil(() => IsDoneAllOperation(asyncOps));
         }
 
-        private async UniTask LoadScenesAsync(TPage page)
+        private async UniTask LoadScenesAsync(TScene scene)
         {
             var asyncOps = new List<UnityEngine.AsyncOperation>();
-            foreach (var sceneEnum in _pageMap[page])
+            foreach (var pageEnum in _sceneMap[scene])
             {
-                if (!_loadedScenes.Contains(sceneEnum))
+                if (!_loadedPages.Contains(pageEnum))
                 {
-                    var asyncOp = SceneManager.LoadSceneAsync(sceneEnum.ToString(), LoadSceneMode.Additive);
+                    var asyncOp = SceneManager.LoadSceneAsync(pageEnum.ToString(), LoadSceneMode.Additive);
                     asyncOps.Add(asyncOp);
-                    _loadedScenes.Add(sceneEnum);
+                    _loadedPages.Add(pageEnum);
                 }
             }
 
@@ -149,11 +130,6 @@ namespace Extreal.Core.SceneTransition
                 }
             }
             return isDone;
-        }
-
-        private bool EnumTryParseAndIsDefined<TEnum>(string value, out TEnum result) where TEnum : struct
-        {
-            return Enum.TryParse(value, out result) && Enum.IsDefined(typeof(TEnum), result);
         }
     }
 }
