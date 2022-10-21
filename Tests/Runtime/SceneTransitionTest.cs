@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -67,6 +67,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.FirstScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstModal.ToString()).IsValid());
 
@@ -75,6 +76,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.SecondScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestFirstStage.ToString()).IsValid());
             Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestFirstModal.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondStage.ToString()).IsValid());
@@ -85,6 +87,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.ThirdScene, _currentScene);
+            Assert.AreEqual(5, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestThirdStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondThirdModal.ToString()).IsValid());
@@ -99,6 +102,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.FirstScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstModal.ToString()).IsValid());
 
@@ -107,6 +111,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.SecondScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestFirstStage.ToString()).IsValid());
             Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestFirstModal.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondStage.ToString()).IsValid());
@@ -117,6 +122,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.ThirdScene, _currentScene);
+            Assert.AreEqual(5, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestThirdStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondThirdModal.ToString()).IsValid());
@@ -147,6 +153,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.ThirdScene, _currentScene);
+            Assert.AreEqual(5, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestThirdStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondThirdModal.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestThirdModal.ToString()).IsValid());
@@ -156,6 +163,9 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.SecondScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
+            Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestThirdStage.ToString()).IsValid());
+            Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestThirdModal.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondThirdModal.ToString()).IsValid());
 
@@ -164,6 +174,9 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.FirstScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
+            Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestSecondStage.ToString()).IsValid());
+            Assert.IsFalse(SceneManager.GetSceneByName(PageName.TestSecondThirdModal.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstModal.ToString()).IsValid());
         }
@@ -180,6 +193,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.SecondScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestSecondThirdModal.ToString()).IsValid());
 
@@ -209,6 +223,7 @@ namespace Extreal.Core.SceneTransition.Test
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.FirstScene, _currentScene);
+            Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(PageName.TestFirstModal.ToString()).IsValid());
 
