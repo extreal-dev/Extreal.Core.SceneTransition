@@ -3,8 +3,7 @@
     "rootNamespace": "Extreal.Core.SceneTransition",
     "references": [
         "Extreal.Core.Logging",
-        "UniTask",
-        "Extreal.Core.Analyzer"
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
