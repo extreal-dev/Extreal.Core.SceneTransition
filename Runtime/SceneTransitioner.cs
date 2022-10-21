@@ -27,7 +27,7 @@ namespace Extreal.Core.SceneTransition
 
             foreach (var permanentName in configuration.PermanentNames)
             {
-                _ = SceneManager.LoadSceneAsync(permanentName.ToString());
+                _ = SceneManager.LoadSceneAsync(permanentName.ToString(), LoadSceneMode.Additive);
             }
         }
 
