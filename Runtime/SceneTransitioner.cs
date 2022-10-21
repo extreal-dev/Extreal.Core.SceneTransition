@@ -6,10 +6,18 @@ using UnityEngine.SceneManagement;
 
 namespace Extreal.Core.SceneTransition
 {
+    /// <summary>
+    /// Class used to transition scenes
+    /// </summary>
+    /// <typeparam name="TPage">Enum defining page names</typeparam>
+    /// <typeparam name="TScene">Enum defining scene names</typeparam>
     public class SceneTransitioner<TPage, TScene> : ISceneTransitioner<TScene>
         where TPage : struct
         where TScene : struct
     {
+        /// <summary>
+        /// Invokes when scene is changed
+        /// </summary>
         public event Action<TScene> OnSceneChanged;
 
         private Dictionary<TScene, TPage[]> _sceneMap = new Dictionary<TScene, TPage[]>();
@@ -18,6 +26,10 @@ namespace Extreal.Core.SceneTransition
         private bool _initialTransition = true;
         private TScene _currentScene;
 
+        /// <summary>
+        /// Creates a new SceneTransitioner with given configuration
+        /// </summary>
+        /// <param name="configuration">Uses to make scene-page map and to load permanent scenes</param>
         public SceneTransitioner(ISceneTransitionConfiguration<TPage, TScene> configuration)
         {
             foreach (var scene in configuration.Scenes)
@@ -31,6 +43,11 @@ namespace Extreal.Core.SceneTransition
             }
         }
 
+        /// <summary>
+        /// Transitions scene without leaving scene transition history
+        /// </summary>
+        /// <param name="scene">Scene Name to transition to</param>
+        /// <returns>UniTask of this method</returns>
         public async UniTask ReplaceAsync(TScene scene)
         {
             if (_initialTransition)
@@ -45,6 +62,11 @@ namespace Extreal.Core.SceneTransition
             OnSceneChanged?.Invoke(_currentScene);
         }
 
+        /// <summary>
+        /// Transitions scene with leaving scene transition history
+        /// </summary>
+        /// <param name="scene">Scene Name to transition to</param>
+        /// <returns>UniTask of this method</returns>
         public async UniTask PushAsync(TScene scene)
         {
             if (!_initialTransition)
@@ -63,6 +85,10 @@ namespace Extreal.Core.SceneTransition
             OnSceneChanged?.Invoke(_currentScene);
         }
 
+        /// <summary>
+        /// Transitions back according to scene transition history
+        /// </summary>
+        /// <returns>UniTask of this method</returns>
         public async UniTask PopAsync()
         {
             if (_sceneHistory.Count == 0)
@@ -77,6 +103,9 @@ namespace Extreal.Core.SceneTransition
             OnSceneChanged?.Invoke(_currentScene);
         }
 
+        /// <summary>
+        /// Resets scene transition history
+        /// </summary>
         public void Reset()
         {
             _sceneHistory.Clear();
