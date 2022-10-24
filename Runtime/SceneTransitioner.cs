@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Extreal.Core.Logging;
 using UnityEngine.SceneManagement;
 
 namespace Extreal.Core.SceneTransition
@@ -15,6 +16,9 @@ namespace Extreal.Core.SceneTransition
         where TScene : struct
         where TUnityScene : struct
     {
+        private static readonly ELogger LOGGER
+            = LoggingManager.GetLogger(nameof(SceneTransitioner<TScene, TUnityScene>));
+        
         /// <summary>
         /// Invokes when scene is changed
         /// </summary>
@@ -59,7 +63,32 @@ namespace Extreal.Core.SceneTransition
             await LoadScenesAsync(scene);
 
             _currentScene = scene;
+            Debug(Operation.Replace, _currentScene);
             this.OnSceneTransitioned?.Invoke(_currentScene);
+        }
+        
+        private enum Operation
+        {
+            Replace,
+            Push,
+            Pop,
+            Reset,
+        }
+
+        private void Debug(Operation operation, TScene scene)
+        {
+            if (LOGGER.IsDebug())
+            {
+                LOGGER.LogDebug($"{operation}: {scene}");
+            }
+        }
+
+        private void Debug(Operation operation)
+        {
+            if (LOGGER.IsDebug())
+            {
+                LOGGER.LogDebug(operation.ToString());
+            }
         }
 
         /// <summary>
@@ -82,6 +111,7 @@ namespace Extreal.Core.SceneTransition
             await LoadScenesAsync(scene);
 
             _currentScene = scene;
+            Debug(Operation.Push, _currentScene);
             this.OnSceneTransitioned?.Invoke(_currentScene);
         }
 
@@ -99,7 +129,8 @@ namespace Extreal.Core.SceneTransition
             _currentScene = _sceneHistory.Pop();
             await UnloadScenesAsync(_currentScene);
             await LoadScenesAsync(_currentScene);
-
+            
+            Debug(Operation.Pop, _currentScene);
             this.OnSceneTransitioned?.Invoke(_currentScene);
         }
 
@@ -109,6 +140,7 @@ namespace Extreal.Core.SceneTransition
         public void Reset()
         {
             _sceneHistory.Clear();
+            Debug(Operation.Reset);
         }
 
         private async UniTask UnloadScenesAsync(TScene scene)

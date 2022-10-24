@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Cysharp.Threading.Tasks;
+using Extreal.Core.Logging;
+using Extreal.Core.Logging.Test.Utility;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,6 +17,20 @@ namespace Extreal.Core.SceneTransition.Test
         private bool _sceneTransitioned;
         private SceneName _currentScene;
         private ISceneTransitioner<SceneName> _sceneTransitioner;
+
+        [SetUp]
+        public void SetUpLogging()
+        {
+            UnityDebugTestUtil.StartLogReceive();
+            LoggingManager.Initialize(
+                logLevel: LogLevel.Debug, writer: new UnityDebugLogWriter(), checker: new LogLevelLogOutputChecker());
+        }
+
+        [TearDown]
+        public void TearDownLogging()
+        {
+            UnityDebugTestUtil.StopLogReceive();
+        }
 
         [UnitySetUp]
         public IEnumerator Initialize()
@@ -237,35 +254,47 @@ namespace Extreal.Core.SceneTransition.Test
         }
 
         [UnityTest]
+        [SuppressMessage("Design", "CC0021:Use nameof")]
         public IEnumerator PushReplacePushPop()
         {
             // Initial Transition
             _ = _sceneTransitioner.ReplaceAsync(SceneName.FirstScene);
             yield return WaitUntilSceneChanged();
 
+            Assert.That(UnityDebugTestUtil.LogText, Does.Contain("Replace: FirstScene"));
+
             // Transition to SecondScene with leaving history
             _ = _sceneTransitioner.PushAsync(SceneName.SecondScene);
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.SecondScene, this._currentScene);
+            Assert.That(UnityDebugTestUtil.LogText, Does.Contain("Push: SecondScene"));
 
             // Transition to ThirdScene without leaving history
             _ = _sceneTransitioner.PushAsync(SceneName.ThirdScene);
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.ThirdScene, this._currentScene);
+            Assert.That(UnityDebugTestUtil.LogText, Does.Contain("Push: ThirdScene"));
 
             // Transition to FirstScene with leaving history
             _ = _sceneTransitioner.PushAsync(SceneName.FirstScene);
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.FirstScene, this._currentScene);
+            Assert.That(UnityDebugTestUtil.LogText, Does.Contain("Push: FirstScene"));
 
             // Transition back to Third according to history
             _ = _sceneTransitioner.PopAsync();
             yield return WaitUntilSceneChanged();
 
             Assert.AreEqual(SceneName.ThirdScene, this._currentScene);
+            Assert.That(UnityDebugTestUtil.LogText, Does.Contain("Pop: ThirdScene"));
+            
+            // Reset
+            this._sceneTransitioner.Reset();
+
+            Assert.That(UnityDebugTestUtil.LogText, Does.Contain("Reset"));
         }
 
         private IEnumerator WaitUntilSceneChanged()

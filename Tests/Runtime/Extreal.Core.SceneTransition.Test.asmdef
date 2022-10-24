@@ -5,7 +5,9 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Extreal.Core.SceneTransition",
-        "UniTask"
+        "UniTask",
+        "Extreal.Core.Logging",
+        "Extreal.Core.Logging.Test.Utility"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
