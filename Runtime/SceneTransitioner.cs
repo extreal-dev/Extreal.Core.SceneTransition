@@ -93,7 +93,7 @@ namespace Extreal.Core.SceneTransition
         {
             if (_sceneHistory.Count == 0)
             {
-                return;
+                throw new InvalidOperationException("there is no scene transition history");
             }
 
             _currentScene = _sceneHistory.Pop();

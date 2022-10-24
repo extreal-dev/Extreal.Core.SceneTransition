@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
 
 namespace Extreal.Core.SceneTransition.Test
 {
@@ -130,6 +133,31 @@ namespace Extreal.Core.SceneTransition.Test
         }
 
         [UnityTest]
+        public IEnumerator PopIfNoHistory() => UniTask.ToCoroutine(async () =>
+        {
+            Exception exception = null;
+            try
+            {
+                await _sceneTransitioner.PopAsync();
+            }
+            catch (Exception e)
+            {
+                exception = e;
+            }
+
+            Assert.IsNotNull(exception);
+
+            void Test()
+            {
+                throw exception;
+            }
+
+            Assert.That(Test, 
+                Throws.TypeOf<InvalidOperationException>()
+                    .With.Message.EqualTo("there is no scene transition history"));
+        });
+
+        [UnityTest]
         public IEnumerator Pop()
         {
             // Transition to FirstScene with leaving history
@@ -199,33 +227,6 @@ namespace Extreal.Core.SceneTransition.Test
 
             // Reset transition history
             _sceneTransitioner.Reset();
-
-            // Transition back according to history
-            // Nothing is executed
-            _ = _sceneTransitioner.PopAsync();
-            yield return new WaitForSeconds(1);
-
-            Assert.IsFalse(this._sceneTransitioned);
-        }
-
-        [UnityTest]
-        public IEnumerator PopWithoutPush()
-        {
-            // Transition back according to history
-            // Nothing is executed
-            _ = _sceneTransitioner.PopAsync();
-            yield return new WaitForSeconds(1);
-
-            Assert.IsFalse(this._sceneTransitioned);
-
-            // Transition to FirstScene without leaving history
-            _ = _sceneTransitioner.ReplaceAsync(SceneName.FirstScene);
-            yield return WaitUntilSceneChanged();
-
-            Assert.AreEqual(SceneName.FirstScene, this._currentScene);
-            Assert.AreEqual(4, SceneManager.sceneCount);
-            Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestFirstStage.ToString()).IsValid());
-            Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestFirstModal.ToString()).IsValid());
 
             // Transition back according to history
             // Nothing is executed

@@ -32,6 +32,7 @@ namespace Extreal.Core.SceneTransition
         /// Transitions back according to scene transition history
         /// </summary>
         /// <returns>UniTask of this method</returns>
+        /// <exception cref="InvalidOperationException">If there is no scene transition history</exception>
         UniTask PopAsync();
 
         /// <summary>
