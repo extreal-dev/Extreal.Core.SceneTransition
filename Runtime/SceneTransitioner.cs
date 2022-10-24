@@ -9,35 +9,35 @@ namespace Extreal.Core.SceneTransition
     /// <summary>
     /// Class used to transition scenes
     /// </summary>
-    /// <typeparam name="TPage">Enum defining page names</typeparam>
-    /// <typeparam name="TScene">Enum defining scene names</typeparam>
-    public class SceneTransitioner<TPage, TScene> : ISceneTransitioner<TScene>
-        where TPage : struct
+    /// <typeparam name="TScene">Enum for scene names</typeparam>
+    /// <typeparam name="TUnityScene">Enum for Unity scene names</typeparam>
+    public class SceneTransitioner<TScene, TUnityScene> : ISceneTransitioner<TScene>
         where TScene : struct
+        where TUnityScene : struct
     {
         /// <summary>
         /// Invokes when scene is changed
         /// </summary>
-        public event Action<TScene> OnSceneChanged;
+        public event Action<TScene> OnSceneTransitioned;
 
-        private Dictionary<TScene, TPage[]> _sceneMap = new Dictionary<TScene, TPage[]>();
+        private Dictionary<TScene, TUnityScene[]> _sceneMap = new Dictionary<TScene, TUnityScene[]>();
         private Stack<TScene> _sceneHistory = new Stack<TScene>();
-        private List<TPage> _loadedPages = new List<TPage>();
+        private List<TUnityScene> _loadedUnityScenes = new List<TUnityScene>();
         private bool _initialTransition = true;
         private TScene _currentScene;
 
         /// <summary>
         /// Creates a new SceneTransitioner with given configuration
         /// </summary>
-        /// <param name="configuration">Uses to make scene-page map and to load permanent scenes</param>
-        public SceneTransitioner(ISceneTransitionConfiguration<TPage, TScene> configuration)
+        /// <param name="config">Scene configuration</param>
+        public SceneTransitioner(ISceneConfig<TScene, TUnityScene> config)
         {
-            foreach (var scene in configuration.Scenes)
+            foreach (var scene in config.Scenes)
             {
-                _sceneMap[scene._sceneName] = scene._pageNames.ToArray();
+                _sceneMap[scene._sceneName] = scene._unitySceneNames.ToArray();
             }
 
-            foreach (var permanentName in configuration.PermanentNames)
+            foreach (var permanentName in config.CommonUnitySceneNames)
             {
                 _ = SceneManager.LoadSceneAsync(permanentName.ToString(), LoadSceneMode.Additive);
             }
@@ -59,7 +59,7 @@ namespace Extreal.Core.SceneTransition
             await LoadScenesAsync(scene);
 
             _currentScene = scene;
-            OnSceneChanged?.Invoke(_currentScene);
+            this.OnSceneTransitioned?.Invoke(_currentScene);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Extreal.Core.SceneTransition
             await LoadScenesAsync(scene);
 
             _currentScene = scene;
-            OnSceneChanged?.Invoke(_currentScene);
+            this.OnSceneTransitioned?.Invoke(_currentScene);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Extreal.Core.SceneTransition
             await UnloadScenesAsync(_currentScene);
             await LoadScenesAsync(_currentScene);
 
-            OnSceneChanged?.Invoke(_currentScene);
+            this.OnSceneTransitioned?.Invoke(_currentScene);
         }
 
         /// <summary>
@@ -114,14 +114,14 @@ namespace Extreal.Core.SceneTransition
         private async UniTask UnloadScenesAsync(TScene scene)
         {
             var asyncOps = new List<UnityEngine.AsyncOperation>();
-            for (var i = _loadedPages.Count - 1; i >= 0; i--)
+            for (var i = this._loadedUnityScenes.Count - 1; i >= 0; i--)
             {
-                var pageEnum = _loadedPages[i];
+                var pageEnum = this._loadedUnityScenes[i];
                 if (!_sceneMap[scene].Contains(pageEnum))
                 {
                     var asyncOp = SceneManager.UnloadSceneAsync(pageEnum.ToString());
                     asyncOps.Add(asyncOp);
-                    _loadedPages.RemoveAt(i);
+                    this._loadedUnityScenes.RemoveAt(i);
                 }
             }
 
@@ -133,11 +133,11 @@ namespace Extreal.Core.SceneTransition
             var asyncOps = new List<UnityEngine.AsyncOperation>();
             foreach (var pageEnum in _sceneMap[scene])
             {
-                if (!_loadedPages.Contains(pageEnum))
+                if (!this._loadedUnityScenes.Contains(pageEnum))
                 {
                     var asyncOp = SceneManager.LoadSceneAsync(pageEnum.ToString(), LoadSceneMode.Additive);
                     asyncOps.Add(asyncOp);
-                    _loadedPages.Add(pageEnum);
+                    this._loadedUnityScenes.Add(pageEnum);
                 }
             }
 

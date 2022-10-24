@@ -1,6 +1,6 @@
 ﻿namespace Extreal.Core.SceneTransition.Test
 {
-    public enum PageName
+    public enum UnitySceneName
     {
         // Permanent
         TestPermanent,

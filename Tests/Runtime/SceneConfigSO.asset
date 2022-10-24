@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0a782da385d2e84fb0cdc440b6364a7, type: 3}
-  m_Name: SceneTransitionConfiguration
+  m_Name: SceneConfigSO
   m_EditorClassIdentifier: 
-  _permanentNames: 00000000
+  _commonUnitySceneNames: 00000000
   _scenes:
   - _sceneName: 0
-    _pageNames: 0100000004000000
+    _unitySceneNames: 0100000004000000
   - _sceneName: 1
-    _pageNames: 0200000005000000
+    _unitySceneNames: 0200000005000000
   - _sceneName: 2
-    _pageNames: 030000000500000006000000
+    _unitySceneNames: 030000000500000006000000

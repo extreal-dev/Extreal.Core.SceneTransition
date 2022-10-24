@@ -6,13 +6,13 @@ namespace Extreal.Core.SceneTransition
     /// <summary>
     /// Interface for implementation transitioning scenes
     /// </summary>
-    /// <typeparam name="TScene">Enum defining scene names</typeparam>
+    /// <typeparam name="TScene">Enum for scene names</typeparam>
     public interface ISceneTransitioner<TScene>
     {
         /// <summary>
-        /// Invokes when scene is changed
+        /// Invokes when scene is transitioned
         /// </summary>
-        event Action<TScene> OnSceneChanged;
+        event Action<TScene> OnSceneTransitioned;
 
         /// <summary>
         /// Transitions scene without leaving scene transition history
