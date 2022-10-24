@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 1008234883}
   - component: {fileID: 1008234884}
   m_Layer: 0
-  m_Name: Configuration
+  m_Name: TestProvider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -262,6 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sceneConfig: {fileID: 11400000, guid: 8b8426757246a584682d43156234319f, type: 2}
+  _emptySceneConfig: {fileID: 11400000, guid: 3a5cde1b1957ed846aef3c4e659b7bb7, type: 2}
 --- !u!1 &1873600361
 GameObject:
   m_ObjectHideFlags: 0

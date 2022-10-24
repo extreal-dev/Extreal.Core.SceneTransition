@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Extreal.Core.Logging;
@@ -36,6 +37,15 @@ namespace Extreal.Core.SceneTransition
         /// <param name="config">Scene configuration</param>
         public SceneTransitioner(ISceneConfig<TScene, TUnityScene> config)
         {
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+            if (isEmpty(config.Scenes))
+            {
+                throw new ArgumentException("scene config requires at least one scene");
+            }
+            
             foreach (var scene in config.Scenes)
             {
                 _sceneMap[scene._sceneName] = scene._unitySceneNames.ToArray();
@@ -45,6 +55,11 @@ namespace Extreal.Core.SceneTransition
             {
                 _ = SceneManager.LoadSceneAsync(permanentName.ToString(), LoadSceneMode.Additive);
             }
+        }
+
+        private bool isEmpty(List<Scene<TScene, TUnityScene>> scenes)
+        {
+            return scenes == null || scenes.Count == 0;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Cysharp.Threading.Tasks;
 using Extreal.Core.Logging;
@@ -48,6 +49,35 @@ namespace Extreal.Core.SceneTransition.Test
         public void Dispose()
         {
             _sceneTransitioner.OnSceneTransitioned -= this.OnSceneTransitioned;
+        }
+
+        [Test]
+        public void InvalidConfig()
+        {
+            void TestConfigIsNull()
+            {
+                _ = new SceneTransitioner<SceneName, UnitySceneName>(null);
+            }
+            Assert.That(TestConfigIsNull,
+                Throws.TypeOf<ArgumentNullException>().With.Message.Contains("Parameter name: config"));
+
+            void TestScenesIsNull()
+            {
+                var config = ScriptableObject.CreateInstance<SceneConfig>();
+                _ = new SceneTransitioner<SceneName, UnitySceneName>(config);
+            }
+            Assert.That(TestScenesIsNull,
+                Throws.TypeOf<ArgumentException>()
+                    .With.Message.EqualTo("scene config requires at least one scene"));
+            
+            void TestScenesIsEmpty()
+            {
+                var provider = Object.FindObjectOfType<SceneConfigProvider>();
+                _ = new SceneTransitioner<SceneName, UnitySceneName>(provider._emptySceneConfig);
+            }
+            Assert.That(TestScenesIsNull,
+                Throws.TypeOf<ArgumentException>()
+                    .With.Message.EqualTo("scene config requires at least one scene"));
         }
 
         [UnityTest]
