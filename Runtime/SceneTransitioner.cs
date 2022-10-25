@@ -33,6 +33,8 @@ namespace Extreal.Core.SceneTransition
         /// <summary>
         /// Creates a new SceneTransitioner with given configuration
         /// </summary>
+        /// <exception cref="ArgumentNullException">If config is null</exception>
+        /// <exception cref="ArgumentException">If config contains no scenes</exception>
         /// <param name="config">Scene configuration</param>
         public SceneTransitioner(ISceneConfig<TScene, TUnityScene> config)
         {
