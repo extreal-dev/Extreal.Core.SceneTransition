@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a782da385d2e84fb0cdc440b6364a7, type: 3}
   m_Name: SceneConfig
   m_EditorClassIdentifier: 
-  _commonUnitySceneNames: 00000000
-  _scenes:
-  - _sceneName: 0
-    _unitySceneNames: 0100000004000000
-  - _sceneName: 1
-    _unitySceneNames: 0200000005000000
-  - _sceneName: 2
-    _unitySceneNames: 030000000500000006000000
+  commonUnitySceneNames: 00000000
+  scenes:
+  - sceneName: 0
+    unitySceneNames: 0100000004000000
+  - sceneName: 1
+    unitySceneNames: 0200000005000000
+  - sceneName: 2
+    unitySceneNames: 030000000500000006000000

@@ -13,7 +13,7 @@ namespace Extreal.Core.SceneTransition
         where TScene : struct
         where TUnityScene : struct
     {
-        public TScene _sceneName;
-        public List<TUnityScene> _unitySceneNames = new List<TUnityScene>();
+        public TScene sceneName;
+        public List<TUnityScene> unitySceneNames = new List<TUnityScene>();
     }
 }

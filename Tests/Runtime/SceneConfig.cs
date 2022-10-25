@@ -8,10 +8,10 @@ namespace Extreal.Core.SceneTransition.Test
         fileName = nameof(SceneConfig))]
     public class SceneConfig : ScriptableObject, ISceneConfig<SceneName, UnitySceneName>
     {
-        [SerializeField] private List<UnitySceneName> _commonUnitySceneNames;
-        [SerializeField] private List<Scene<SceneName, UnitySceneName>> _scenes;
+        [SerializeField] private List<UnitySceneName> commonUnitySceneNames;
+        [SerializeField] private List<Scene<SceneName, UnitySceneName>> scenes;
 
-        public List<UnitySceneName> CommonUnitySceneNames => this._commonUnitySceneNames;
-        public List<Scene<SceneName, UnitySceneName>> Scenes => _scenes;
+        public List<UnitySceneName> CommonUnitySceneNames => this.commonUnitySceneNames;
+        public List<Scene<SceneName, UnitySceneName>> Scenes => scenes;
     }
 }

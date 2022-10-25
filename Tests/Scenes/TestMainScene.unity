@@ -261,8 +261,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7da018327d6114c48b64ca76c8ec7498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sceneConfig: {fileID: 11400000, guid: 8b8426757246a584682d43156234319f, type: 2}
-  _emptySceneConfig: {fileID: 11400000, guid: 3a5cde1b1957ed846aef3c4e659b7bb7, type: 2}
+  sceneConfig: {fileID: 11400000, guid: 8b8426757246a584682d43156234319f, type: 2}
+  emptySceneConfig: {fileID: 11400000, guid: 3a5cde1b1957ed846aef3c4e659b7bb7, type: 2}
 --- !u!1 &1873600361
 GameObject:
   m_ObjectHideFlags: 0
