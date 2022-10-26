@@ -17,14 +17,12 @@ namespace Extreal.Core.SceneTransition.Test
         private SceneName currentScene;
         private ISceneTransitioner<SceneName> sceneTransitioner;
 
-        [SetUp]
-        public void SetUpLogging() =>
-            LoggingManager.Initialize(
-                logLevel: LogLevel.Debug, writer: new UnityDebugLogWriter(), checker: new LogLevelLogOutputChecker());
-
         [UnitySetUp]
         public IEnumerator Initialize()
         {
+            LoggingManager.Initialize(
+                logLevel: LogLevel.Debug, writer: new UnityDebugLogWriter(), checker: new LogLevelLogOutputChecker());
+
             var asyncOp = SceneManager.LoadSceneAsync("TestMainScene");
             yield return new WaitUntil(() => asyncOp.isDone);
 
@@ -34,7 +32,7 @@ namespace Extreal.Core.SceneTransition.Test
             this.sceneTransitioned = false;
         }
 
-        [TearDown]
+        [UnityTearDown]
         public void Dispose() => sceneTransitioner.OnSceneTransitioned -= this.OnSceneTransitioned;
 
         [Test]
