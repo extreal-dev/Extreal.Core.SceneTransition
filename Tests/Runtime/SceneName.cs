@@ -1,4 +1,4 @@
-﻿namespace Extreal.Core.SceneTransition.Test
+namespace Extreal.Core.SceneTransition.Test
 {
     public enum SceneName
     {

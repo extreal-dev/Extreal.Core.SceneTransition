@@ -17,33 +17,27 @@ namespace Extreal.Core.SceneTransition.Test
         private SceneName currentScene;
         private ISceneTransitioner<SceneName> sceneTransitioner;
 
-        [SetUp]
-        public void SetUpLogging() =>
-            LoggingManager.Initialize(
-                logLevel: LogLevel.Debug, writer: new UnityDebugLogWriter(), checker: new LogLevelLogOutputChecker());
-
         [UnitySetUp]
         public IEnumerator Initialize()
         {
-            var asyncOp = SceneManager.LoadSceneAsync("TestMainScene");
+            LoggingManager.Initialize(logLevel: LogLevel.Debug);
+
+            var asyncOp = SceneManager.LoadSceneAsync("TestSceneTransitionScene");
             yield return new WaitUntil(() => asyncOp.isDone);
 
             var provider = Object.FindObjectOfType<SceneConfigProvider>();
-            sceneTransitioner = new SceneTransitioner<SceneName, UnitySceneName>(provider.sceneConfig);
-            sceneTransitioner.OnSceneTransitioned += this.OnSceneTransitioned;
-            this.sceneTransitioned = false;
+            sceneTransitioner = new SceneTransitioner<SceneName, UnitySceneName>(provider.SceneConfig);
+            sceneTransitioner.OnSceneTransitioned += OnSceneTransitioned;
+            sceneTransitioned = false;
         }
 
         [TearDown]
-        public void Dispose() => sceneTransitioner.OnSceneTransitioned -= this.OnSceneTransitioned;
+        public void Dispose() => sceneTransitioner.OnSceneTransitioned -= OnSceneTransitioned;
 
         [Test]
         public void InvalidConfig()
         {
-            void TestConfigIsNull()
-            {
-                _ = new SceneTransitioner<SceneName, UnitySceneName>(null);
-            }
+            void TestConfigIsNull() => _ = new SceneTransitioner<SceneName, UnitySceneName>(null);
             Assert.That(TestConfigIsNull,
                 Throws.TypeOf<ArgumentNullException>().With.Message.Contains("Parameter name: config"));
 
@@ -59,7 +53,7 @@ namespace Extreal.Core.SceneTransition.Test
             void TestScenesIsEmpty()
             {
                 var provider = Object.FindObjectOfType<SceneConfigProvider>();
-                _ = new SceneTransitioner<SceneName, UnitySceneName>(provider.emptySceneConfig);
+                _ = new SceneTransitioner<SceneName, UnitySceneName>(provider.EmptySceneConfig);
             }
             Assert.That(TestScenesIsEmpty,
                 Throws.TypeOf<ArgumentException>()
@@ -102,7 +96,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.ReplaceAsync(SceneName.FirstScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.FirstScene, this.currentScene);
+            Assert.AreEqual(SceneName.FirstScene, currentScene);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestFirstModal.ToString()).IsValid());
@@ -111,7 +105,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.ReplaceAsync(SceneName.SecondScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.SecondScene, this.currentScene);
+            Assert.AreEqual(SceneName.SecondScene, currentScene);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestFirstStage.ToString()).IsValid());
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestFirstModal.ToString()).IsValid());
@@ -122,7 +116,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.ReplaceAsync(SceneName.ThirdScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.ThirdScene, this.currentScene);
+            Assert.AreEqual(SceneName.ThirdScene, currentScene);
             Assert.AreEqual(5, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestThirdStage.ToString()).IsValid());
@@ -137,7 +131,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PushAsync(SceneName.FirstScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.FirstScene, this.currentScene);
+            Assert.AreEqual(SceneName.FirstScene, currentScene);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestFirstModal.ToString()).IsValid());
@@ -146,7 +140,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PushAsync(SceneName.SecondScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.SecondScene, this.currentScene);
+            Assert.AreEqual(SceneName.SecondScene, currentScene);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestFirstStage.ToString()).IsValid());
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestFirstModal.ToString()).IsValid());
@@ -157,7 +151,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PushAsync(SceneName.ThirdScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.ThirdScene, this.currentScene);
+            Assert.AreEqual(SceneName.ThirdScene, currentScene);
             Assert.AreEqual(5, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestThirdStage.ToString()).IsValid());
@@ -180,10 +174,7 @@ namespace Extreal.Core.SceneTransition.Test
 
             Assert.IsNotNull(exception);
 
-            void Test()
-            {
-                throw exception;
-            }
+            void Test() => throw exception;
 
             Assert.That(Test,
                 Throws.TypeOf<InvalidOperationException>()
@@ -213,7 +204,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PopAsync();
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.ThirdScene, this.currentScene);
+            Assert.AreEqual(SceneName.ThirdScene, currentScene);
             Assert.AreEqual(5, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestThirdStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestSecondThirdModal.ToString()).IsValid());
@@ -223,7 +214,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PopAsync();
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.SecondScene, this.currentScene);
+            Assert.AreEqual(SceneName.SecondScene, currentScene);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestThirdStage.ToString()).IsValid());
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestThirdModal.ToString()).IsValid());
@@ -234,7 +225,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PopAsync();
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.FirstScene, this.currentScene);
+            Assert.AreEqual(SceneName.FirstScene, currentScene);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestSecondStage.ToString()).IsValid());
             Assert.IsFalse(SceneManager.GetSceneByName(UnitySceneName.TestSecondThirdModal.ToString()).IsValid());
@@ -253,7 +244,7 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PushAsync(SceneName.SecondScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.SecondScene, this.currentScene);
+            Assert.AreEqual(SceneName.SecondScene, currentScene);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(UnitySceneName.TestSecondThirdModal.ToString()).IsValid());
@@ -276,46 +267,46 @@ namespace Extreal.Core.SceneTransition.Test
             _ = sceneTransitioner.PushAsync(SceneName.SecondScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.SecondScene, this.currentScene);
+            Assert.AreEqual(SceneName.SecondScene, currentScene);
             LogAssert.Expect(LogType.Log, "[Debug:SceneTransitioner] Push: SecondScene");
 
             // Transition to ThirdScene without leaving history
             _ = sceneTransitioner.PushAsync(SceneName.ThirdScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.ThirdScene, this.currentScene);
+            Assert.AreEqual(SceneName.ThirdScene, currentScene);
             LogAssert.Expect(LogType.Log, "[Debug:SceneTransitioner] Push: ThirdScene");
 
             // Transition to FirstScene with leaving history
             _ = sceneTransitioner.PushAsync(SceneName.FirstScene);
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.FirstScene, this.currentScene);
+            Assert.AreEqual(SceneName.FirstScene, currentScene);
             LogAssert.Expect(LogType.Log, "[Debug:SceneTransitioner] Push: FirstScene");
 
             // Transition back to Third according to history
             _ = sceneTransitioner.PopAsync();
             yield return WaitUntilSceneChanged();
 
-            Assert.AreEqual(SceneName.ThirdScene, this.currentScene);
+            Assert.AreEqual(SceneName.ThirdScene, currentScene);
             LogAssert.Expect(LogType.Log, "[Debug:SceneTransitioner] Pop: ThirdScene");
 
             // Reset
-            this.sceneTransitioner.Reset();
+            sceneTransitioner.Reset();
 
             LogAssert.Expect(LogType.Log, "[Debug:SceneTransitioner] Reset");
         }
 
         private IEnumerator WaitUntilSceneChanged()
         {
-            yield return new WaitUntil(() => this.sceneTransitioned);
-            this.sceneTransitioned = false;
+            yield return new WaitUntil(() => sceneTransitioned);
+            sceneTransitioned = false;
         }
 
         private void OnSceneTransitioned(SceneName scene)
         {
-            this.currentScene = scene;
-            this.sceneTransitioned = true;
+            currentScene = scene;
+            sceneTransitioned = true;
         }
     }
 }
