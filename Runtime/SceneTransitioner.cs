@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -49,7 +49,7 @@ namespace Extreal.Core.SceneTransition
 
             foreach (var scene in config.Scenes)
             {
-                sceneMap[scene.sceneName] = scene.unitySceneNames.ToArray();
+                sceneMap[scene.SceneName] = scene.UnitySceneNames.ToArray();
             }
 
             foreach (var permanentName in config.CommonUnitySceneNames)
@@ -57,8 +57,6 @@ namespace Extreal.Core.SceneTransition
                 _ = SceneManager.LoadSceneAsync(permanentName.ToString(), LoadSceneMode.Additive);
             }
         }
-
-        private static bool IsEmpty(List<Scene<TScene, TUnityScene>> scenes) => scenes == null || scenes.Count == 0;
 
         /// <summary>
         /// Transitions scene without leaving scene transition history
@@ -77,31 +75,7 @@ namespace Extreal.Core.SceneTransition
 
             currentScene = scene;
             Debug(Operation.Replace, currentScene);
-            this.OnSceneTransitioned?.Invoke(currentScene);
-        }
-
-        private enum Operation
-        {
-            Replace,
-            Push,
-            Pop,
-            Reset,
-        }
-
-        private static void Debug(Operation operation, TScene scene)
-        {
-            if (Logger.IsDebug())
-            {
-                Logger.LogDebug($"{operation}: {scene}");
-            }
-        }
-
-        private static void Debug(Operation operation)
-        {
-            if (Logger.IsDebug())
-            {
-                Logger.LogDebug(operation.ToString());
-            }
+            OnSceneTransitioned?.Invoke(currentScene);
         }
 
         /// <summary>
@@ -125,7 +99,7 @@ namespace Extreal.Core.SceneTransition
 
             currentScene = scene;
             Debug(Operation.Push, currentScene);
-            this.OnSceneTransitioned?.Invoke(currentScene);
+            OnSceneTransitioned?.Invoke(currentScene);
         }
 
         /// <summary>
@@ -144,7 +118,7 @@ namespace Extreal.Core.SceneTransition
             await LoadScenesAsync(currentScene);
 
             Debug(Operation.Pop, currentScene);
-            this.OnSceneTransitioned?.Invoke(currentScene);
+            OnSceneTransitioned?.Invoke(currentScene);
         }
 
         /// <summary>
@@ -178,16 +152,19 @@ namespace Extreal.Core.SceneTransition
             var asyncOps = new List<UnityEngine.AsyncOperation>();
             foreach (var pageEnum in sceneMap[scene])
             {
-                if (!this.loadedUnityScenes.Contains(pageEnum))
+                if (!loadedUnityScenes.Contains(pageEnum))
                 {
                     var asyncOp = SceneManager.LoadSceneAsync(pageEnum.ToString(), LoadSceneMode.Additive);
                     asyncOps.Add(asyncOp);
-                    this.loadedUnityScenes.Add(pageEnum);
+                    loadedUnityScenes.Add(pageEnum);
                 }
             }
 
             await UniTask.WaitUntil(() => IsDoneAllOperation(asyncOps));
         }
+
+        private static bool IsEmpty(List<Scene<TScene, TUnityScene>> scenes)
+            => scenes == null || scenes.Count == 0;
 
         private bool IsDoneAllOperation(List<UnityEngine.AsyncOperation> asyncOps)
         {
@@ -204,6 +181,30 @@ namespace Extreal.Core.SceneTransition
                 }
             }
             return isDone;
+        }
+
+        private static void Debug(Operation operation, TScene scene)
+        {
+            if (Logger.IsDebug())
+            {
+                Logger.LogDebug($"{operation}: {scene}");
+            }
+        }
+
+        private static void Debug(Operation operation)
+        {
+            if (Logger.IsDebug())
+            {
+                Logger.LogDebug(operation.ToString());
+            }
+        }
+
+        private enum Operation
+        {
+            Replace,
+            Push,
+            Pop,
+            Reset,
         }
     }
 }

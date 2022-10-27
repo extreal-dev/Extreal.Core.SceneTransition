@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Extreal.Core.SceneTransition
 {
@@ -13,7 +14,10 @@ namespace Extreal.Core.SceneTransition
         where TScene : struct
         where TUnityScene : struct
     {
-        public TScene sceneName;
-        public List<TUnityScene> unitySceneNames = new List<TUnityScene>();
+        [SerializeField] private TScene sceneName;
+        [SerializeField] private List<TUnityScene> unitySceneNames;
+
+        public TScene SceneName => sceneName;
+        public List<TUnityScene> UnitySceneNames => unitySceneNames;
     }
 }

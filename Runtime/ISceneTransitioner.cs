@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cysharp.Threading.Tasks;
 
 namespace Extreal.Core.SceneTransition
