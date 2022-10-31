@@ -1,0 +1,17 @@
+{
+    "name": "Extreal.Core.SceneTransition",
+    "rootNamespace": "Extreal.Core.SceneTransition",
+    "references": [
+        "Extreal.Core.Logging",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
