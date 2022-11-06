@@ -19,9 +19,10 @@ namespace Extreal.Core.StageNavigation
         private static readonly ELogger Logger
             = LoggingManager.GetLogger(nameof(StageNavigator<TStage, TScene>));
 
-        /// <summary>
-        /// Invokes when stage is changed
-        /// </summary>
+        /// <inheritdoc/>
+        public event Action<TStage> OnStageTransitioning;
+
+        /// <inheritdoc/>
         public event Action<TStage> OnStageTransitioned;
 
         private readonly Dictionary<TStage, TScene[]> stageMap = new Dictionary<TStage, TScene[]>();
@@ -58,13 +59,10 @@ namespace Extreal.Core.StageNavigation
             }
         }
 
-        /// <summary>
-        /// Transitions stage without leaving stage transition history
-        /// </summary>
-        /// <param name="stage">Stage Name to transition to</param>
-        /// <returns>UniTask of this method</returns>
+        /// <inheritdoc/>
         public async UniTask ReplaceAsync(TStage stage)
         {
+            OnStageTransitioning?.Invoke(stage);
             if (initialTransition)
             {
                 initialTransition = false;
@@ -78,13 +76,10 @@ namespace Extreal.Core.StageNavigation
             OnStageTransitioned?.Invoke(currentStage);
         }
 
-        /// <summary>
-        /// Transitions stage with leaving stage transition history
-        /// </summary>
-        /// <param name="stage">Stage Name to transition to</param>
-        /// <returns>UniTask of this method</returns>
+        /// <inheritdoc/>
         public async UniTask PushAsync(TStage stage)
         {
+            OnStageTransitioning?.Invoke(stage);
             if (!initialTransition)
             {
                 stageHistory.Push(currentStage);
@@ -102,10 +97,7 @@ namespace Extreal.Core.StageNavigation
             OnStageTransitioned?.Invoke(currentStage);
         }
 
-        /// <summary>
-        /// Transitions back according to stage transition history
-        /// </summary>
-        /// <returns>UniTask of this method</returns>
+        /// <inheritdoc/>
         public async UniTask PopAsync()
         {
             if (stageHistory.Count == 0)
@@ -114,6 +106,7 @@ namespace Extreal.Core.StageNavigation
             }
 
             currentStage = stageHistory.Pop();
+            OnStageTransitioning?.Invoke(currentStage);
             await UnloadScenesAsync(currentStage);
             await LoadScenesAsync(currentStage);
 
@@ -121,9 +114,7 @@ namespace Extreal.Core.StageNavigation
             OnStageTransitioned?.Invoke(currentStage);
         }
 
-        /// <summary>
-        /// Resets stage transition history
-        /// </summary>
+        /// <inheritdoc/>
         public void Reset()
         {
             stageHistory.Clear();

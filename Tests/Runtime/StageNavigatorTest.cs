@@ -15,6 +15,18 @@ namespace Extreal.Core.StageNavigation.Test
         private StageName currentStage;
         private IStageNavigator<StageName> stageNavigator;
 
+        private StageName onStageTransitioning;
+        private StageName onStageTransitioned;
+
+        private void OnStageTransitioning(StageName stage)
+            => onStageTransitioning = stage;
+
+        private void OnStageTransitioned(StageName stage)
+        {
+            currentStage = stage;
+            onStageTransitioned = stage;
+        }
+
         [UnitySetUp]
         public IEnumerator InitializeAsync() => UniTask.ToCoroutine(async () =>
         {
@@ -24,12 +36,17 @@ namespace Extreal.Core.StageNavigation.Test
 
             var provider = Object.FindObjectOfType<StageConfigProvider>();
             stageNavigator = new StageNavigator<StageName, SceneName>(provider.StageConfig);
+            stageNavigator.OnStageTransitioning += OnStageTransitioning;
             stageNavigator.OnStageTransitioned += OnStageTransitioned;
+
+            onStageTransitioning = StageName.Unused;
+            onStageTransitioned = StageName.Unused;
         });
 
         [UnityTearDown]
         public IEnumerator DisposeAsync() => UniTask.ToCoroutine(async () =>
         {
+            stageNavigator.OnStageTransitioning -= OnStageTransitioning;
             stageNavigator.OnStageTransitioned -= OnStageTransitioned;
             await UniTask.Yield();
         });
@@ -224,36 +241,50 @@ namespace Extreal.Core.StageNavigation.Test
         [UnityTest]
         public IEnumerator PushReplacePushPop() => UniTask.ToCoroutine(async () =>
         {
+            Assert.That(onStageTransitioning, Is.EqualTo(StageName.Unused));
+            Assert.That(onStageTransitioned, Is.EqualTo(StageName.Unused));
+
             // Initial Transition
             await stageNavigator.ReplaceAsync(StageName.FirstStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Replace: FirstStage");
+            Assert.That(onStageTransitioning, Is.EqualTo(StageName.FirstStage));
+            Assert.That(onStageTransitioned, Is.EqualTo(StageName.FirstStage));
 
             // Transition to SecondScene with leaving history
             await stageNavigator.PushAsync(StageName.SecondStage);
             Assert.AreEqual(StageName.SecondStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Push: SecondStage");
+            Assert.That(onStageTransitioning, Is.EqualTo(StageName.SecondStage));
+            Assert.That(onStageTransitioned, Is.EqualTo(StageName.SecondStage));
 
             // Transition to ThirdScene without leaving history
             await stageNavigator.PushAsync(StageName.ThirdStage);
             Assert.AreEqual(StageName.ThirdStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Push: ThirdStage");
+            Assert.That(onStageTransitioning, Is.EqualTo(StageName.ThirdStage));
+            Assert.That(onStageTransitioned, Is.EqualTo(StageName.ThirdStage));
 
             // Transition to FirstScene with leaving history
             await stageNavigator.PushAsync(StageName.FirstStage);
             Assert.AreEqual(StageName.FirstStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Push: FirstStage");
+            Assert.That(onStageTransitioning, Is.EqualTo(StageName.FirstStage));
+            Assert.That(onStageTransitioned, Is.EqualTo(StageName.FirstStage));
 
             // Transition back to Third according to history
             await stageNavigator.PopAsync();
             Assert.AreEqual(StageName.ThirdStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Pop: ThirdStage");
+            Assert.That(onStageTransitioning, Is.EqualTo(StageName.ThirdStage));
+            Assert.That(onStageTransitioned, Is.EqualTo(StageName.ThirdStage));
 
             // Reset
+            onStageTransitioning = StageName.Unused;
+            onStageTransitioned = StageName.Unused;
             stageNavigator.Reset();
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Reset");
+            Assert.That(onStageTransitioning, Is.EqualTo(StageName.Unused));
+            Assert.That(onStageTransitioned, Is.EqualTo(StageName.Unused));
         });
-
-        private void OnStageTransitioned(StageName stage)
-            => currentStage = stage;
     }
 }

@@ -10,7 +10,12 @@ namespace Extreal.Core.StageNavigation
     public interface IStageNavigator<TStage>
     {
         /// <summary>
-        /// Invokes when stage is transitioned
+        /// Invokes just before a stage transitioning
+        /// </summary>
+        event Action<TStage> OnStageTransitioning;
+
+        /// <summary>
+        /// Invokes immediately after a stage transitioned
         /// </summary>
         event Action<TStage> OnStageTransitioned;
 

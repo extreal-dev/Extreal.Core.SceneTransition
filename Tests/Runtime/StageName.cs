@@ -5,5 +5,6 @@ namespace Extreal.Core.StageNavigation.Test
         FirstStage,
         SecondStage,
         ThirdStage,
+        Unused,
     }
 }
