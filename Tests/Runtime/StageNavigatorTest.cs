@@ -176,7 +176,7 @@ namespace Extreal.Core.StageNavigation.Test
 
             Assert.That(Test,
                 Throws.TypeOf<InvalidOperationException>()
-                    .With.Message.EqualTo("there is no scene transition history"));
+                    .With.Message.EqualTo("there is no stage transition history"));
         });
 
         [UnityTest]

@@ -102,7 +102,7 @@ namespace Extreal.Core.StageNavigation
         {
             if (stageHistory.Count == 0)
             {
-                throw new InvalidOperationException("there is no scene transition history");
+                throw new InvalidOperationException("there is no stage transition history");
             }
 
             currentStage = stageHistory.Pop();
