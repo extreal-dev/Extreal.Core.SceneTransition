@@ -271,7 +271,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.That(onStageTransitioning, Is.EqualTo(StageName.FirstStage));
             Assert.That(onStageTransitioned, Is.EqualTo(StageName.FirstStage));
 
-            // Transition back to Third according to history
+            // Transition back to ThirdStage according to history
             await stageNavigator.PopAsync();
             Assert.AreEqual(StageName.ThirdStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Pop: ThirdStage");
