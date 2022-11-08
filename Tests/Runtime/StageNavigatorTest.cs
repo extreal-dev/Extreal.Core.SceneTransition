@@ -82,15 +82,15 @@ namespace Extreal.Core.StageNavigation.Test
         {
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestPermanent.ToString()).IsValid());
 
-            // Transition to FirstScene without leaving history
+            // Transition to FirstStage without leaving history
             await stageNavigator.ReplaceAsync(StageName.FirstStage);
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestPermanent.ToString()).IsValid());
 
-            // Transition to SecondScene with leaving history
+            // Transition to SecondStage with leaving history
             await stageNavigator.PushAsync(StageName.SecondStage);
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestPermanent.ToString()).IsValid());
 
-            // Transition back to FirstScene according to history
+            // Transition back to FirstStage according to history
             await stageNavigator.PopAsync();
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestPermanent.ToString()).IsValid());
 
@@ -102,14 +102,14 @@ namespace Extreal.Core.StageNavigation.Test
         [UnityTest]
         public IEnumerator Replace() => UniTask.ToCoroutine(async () =>
         {
-            // Transition to FirstScene without leaving history
+            // Transition to FirstStage without leaving history
             await stageNavigator.ReplaceAsync(StageName.FirstStage);
             Assert.AreEqual(StageName.FirstStage, currentStage);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestFirstModal.ToString()).IsValid());
 
-            // Transition to SecondScene without leaving history
+            // Transition to SecondStage without leaving history
             await stageNavigator.ReplaceAsync(StageName.SecondStage);
             Assert.AreEqual(StageName.SecondStage, currentStage);
             Assert.AreEqual(4, SceneManager.sceneCount);
@@ -118,7 +118,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondThirdModal.ToString()).IsValid());
 
-            // Transition to ThirdScene without leaving history
+            // Transition to ThirdStage without leaving history
             await stageNavigator.ReplaceAsync(StageName.ThirdStage);
             Assert.AreEqual(StageName.ThirdStage, currentStage);
             Assert.AreEqual(5, SceneManager.sceneCount);
@@ -131,14 +131,14 @@ namespace Extreal.Core.StageNavigation.Test
         [UnityTest]
         public IEnumerator Push() => UniTask.ToCoroutine(async () =>
         {
-            // Transition to FirstScene with leaving history
+            // Transition to FirstStage with leaving history
             await stageNavigator.PushAsync(StageName.FirstStage);
             Assert.AreEqual(StageName.FirstStage, currentStage);
             Assert.AreEqual(4, SceneManager.sceneCount);
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestFirstStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestFirstModal.ToString()).IsValid());
 
-            // Transition to SecondScene with leaving history
+            // Transition to SecondStage with leaving history
             await stageNavigator.PushAsync(StageName.SecondStage);
             Assert.AreEqual(StageName.SecondStage, currentStage);
             Assert.AreEqual(4, SceneManager.sceneCount);
@@ -147,7 +147,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondThirdModal.ToString()).IsValid());
 
-            // Transition to ThirdScene with leaving history
+            // Transition to ThirdStage with leaving history
             await stageNavigator.PushAsync(StageName.ThirdStage);
             Assert.AreEqual(StageName.ThirdStage, currentStage);
             Assert.AreEqual(5, SceneManager.sceneCount);
@@ -182,19 +182,19 @@ namespace Extreal.Core.StageNavigation.Test
         [UnityTest]
         public IEnumerator Pop() => UniTask.ToCoroutine(async () =>
         {
-            // Transition to FirstScene with leaving history
+            // Transition to FirstStage with leaving history
             await stageNavigator.PushAsync(StageName.FirstStage);
 
-            // Transition to SecondScene with leaving history
+            // Transition to SecondStage with leaving history
             await stageNavigator.PushAsync(StageName.SecondStage);
 
-            // Transition to ThirdScene with leaving history
+            // Transition to ThirdStage with leaving history
             await stageNavigator.PushAsync(StageName.ThirdStage);
 
-            // Transition to FirstScene with leaving history
+            // Transition to FirstStage with leaving history
             await stageNavigator.PushAsync(StageName.FirstStage);
 
-            // Transition back to ThirdScene according to history
+            // Transition back to ThirdStage according to history
             await stageNavigator.PopAsync();
             Assert.AreEqual(StageName.ThirdStage, currentStage);
             Assert.AreEqual(5, SceneManager.sceneCount);
@@ -202,7 +202,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondThirdModal.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestThirdModal.ToString()).IsValid());
 
-            // Transition back to SecondScene according to history
+            // Transition back to SecondStage according to history
             await stageNavigator.PopAsync();
             Assert.AreEqual(StageName.SecondStage, currentStage);
             Assert.AreEqual(4, SceneManager.sceneCount);
@@ -211,7 +211,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondStage.ToString()).IsValid());
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondThirdModal.ToString()).IsValid());
 
-            // Transition back to FirstScene according to history
+            // Transition back to FirstStage according to history
             await stageNavigator.PopAsync();
             Assert.AreEqual(StageName.FirstStage, currentStage);
             Assert.AreEqual(4, SceneManager.sceneCount);
@@ -224,10 +224,10 @@ namespace Extreal.Core.StageNavigation.Test
         [UnityTest]
         public IEnumerator Reset() => UniTask.ToCoroutine(async () =>
         {
-            // Transition to FirstScene with leaving history
+            // Transition to FirstStage with leaving history
             await stageNavigator.PushAsync(StageName.FirstStage);
 
-            // Transition to SecondScene with leaving history
+            // Transition to SecondStage with leaving history
             await stageNavigator.PushAsync(StageName.SecondStage);
             Assert.AreEqual(StageName.SecondStage, currentStage);
             Assert.AreEqual(4, SceneManager.sceneCount);
@@ -250,21 +250,21 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.That(onStageTransitioning, Is.EqualTo(StageName.FirstStage));
             Assert.That(onStageTransitioned, Is.EqualTo(StageName.FirstStage));
 
-            // Transition to SecondScene with leaving history
+            // Transition to SecondStage with leaving history
             await stageNavigator.PushAsync(StageName.SecondStage);
             Assert.AreEqual(StageName.SecondStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Push: SecondStage");
             Assert.That(onStageTransitioning, Is.EqualTo(StageName.SecondStage));
             Assert.That(onStageTransitioned, Is.EqualTo(StageName.SecondStage));
 
-            // Transition to ThirdScene without leaving history
+            // Transition to ThirdStage without leaving history
             await stageNavigator.PushAsync(StageName.ThirdStage);
             Assert.AreEqual(StageName.ThirdStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Push: ThirdStage");
             Assert.That(onStageTransitioning, Is.EqualTo(StageName.ThirdStage));
             Assert.That(onStageTransitioned, Is.EqualTo(StageName.ThirdStage));
 
-            // Transition to FirstScene with leaving history
+            // Transition to FirstStage with leaving history
             await stageNavigator.PushAsync(StageName.FirstStage);
             Assert.AreEqual(StageName.FirstStage, currentStage);
             LogAssert.Expect(LogType.Log, "[Debug:StageNavigator] Push: FirstStage");
