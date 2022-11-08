@@ -1,6 +1,6 @@
 {
-    "name": "Extreal.Core.SceneTransition",
-    "rootNamespace": "Extreal.Core.SceneTransition",
+    "name": "Extreal.Core.StageNavigation",
+    "rootNamespace": "Extreal.Core.StageNavigation",
     "references": [
         "Extreal.Core.Logging",
         "UniTask"

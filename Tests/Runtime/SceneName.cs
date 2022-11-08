@@ -1,9 +1,18 @@
-namespace Extreal.Core.SceneTransition.Test
+namespace Extreal.Core.StageNavigation.Test
 {
     public enum SceneName
     {
-        FirstScene,
-        SecondScene,
-        ThirdScene,
+        // Permanent
+        TestPermanent,
+
+        // Stage
+        TestFirstStage,
+        TestSecondStage,
+        TestThirdStage,
+
+        // Modal
+        TestFirstModal,
+        TestSecondThirdModal,
+        TestThirdModal,
     }
 }
