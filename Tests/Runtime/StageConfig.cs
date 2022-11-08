@@ -8,10 +8,10 @@ namespace Extreal.Core.StageNavigation.Test
         fileName = nameof(StageConfig))]
     public class StageConfig : ScriptableObject, IStageConfig<StageName, SceneName>
     {
-        [SerializeField] private List<SceneName> commonUnitySceneNames;
-        [SerializeField] private List<Stage<StageName, SceneName>> scenes;
+        [SerializeField] private List<SceneName> commonScenes;
+        [SerializeField] private List<Stage<StageName, SceneName>> stages;
 
-        public List<SceneName> CommonScenes => commonUnitySceneNames;
-        public List<Stage<StageName, SceneName>> Stages => scenes;
+        public List<SceneName> CommonScenes => commonScenes;
+        public List<Stage<StageName, SceneName>> Stages => stages;
     }
 }
