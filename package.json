@@ -1,7 +1,7 @@
 {
-  "name": "jp.co.tis.extreal.core.scenetransition",
+  "name": "jp.co.tis.extreal.core.stagenavigation",
   "version": "0.1.0",
-  "displayName": "Extreal.Core.SceneTransition",
+  "displayName": "Extreal.Core.StageNavigation",
   "unity": "2021.3",
   "author": {
     "name": "TIS Inc."
