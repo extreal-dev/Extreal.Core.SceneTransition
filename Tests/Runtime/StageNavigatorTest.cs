@@ -13,7 +13,7 @@ namespace Extreal.Core.StageNavigation.Test
     public class StageNavigatorTest
     {
         private StageName currentStage;
-        private IStageNavigator<StageName> stageNavigator;
+        private StageNavigator<StageName, SceneName> stageNavigator;
 
         private StageName onStageTransitioning;
         private StageName onStageTransitioned;

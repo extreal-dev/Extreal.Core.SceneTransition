@@ -12,17 +12,21 @@ namespace Extreal.Core.StageNavigation
     /// </summary>
     /// <typeparam name="TStage">Enum for stage names</typeparam>
     /// <typeparam name="TScene">Enum for scene names</typeparam>
-    public class StageNavigator<TStage, TScene> : IStageNavigator<TStage>
+    public class StageNavigator<TStage, TScene>
         where TStage : struct
         where TScene : struct
     {
         private static readonly ELogger Logger
             = LoggingManager.GetLogger(nameof(StageNavigator<TStage, TScene>));
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Invokes just before a stage transitioning
+        /// </summary>
         public event Action<TStage> OnStageTransitioning;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Invokes immediately after a stage transitioned
+        /// </summary>
         public event Action<TStage> OnStageTransitioned;
 
         private readonly Dictionary<TStage, TScene[]> stageMap = new Dictionary<TStage, TScene[]>();
@@ -59,7 +63,11 @@ namespace Extreal.Core.StageNavigation
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Transitions stage without leaving stage transition history
+        /// </summary>
+        /// <param name="stage">Stage Name to transition to</param>
+        /// <returns>UniTask of this method</returns>
         public async UniTask ReplaceAsync(TStage stage)
         {
             OnStageTransitioning?.Invoke(stage);
