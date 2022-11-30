@@ -3,6 +3,7 @@ using System.Collections;
 using Cysharp.Threading.Tasks;
 using Extreal.Core.Logging;
 using NUnit.Framework;
+using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -17,11 +18,7 @@ namespace Extreal.Core.StageNavigation.Test
         private StageName transitioningStageName;
         private StageName transitionedStageName;
 
-        private void OnStageTransitioning(StageName stage)
-            => transitioningStageName = stage;
-
-        private void OnStageTransitioned(StageName stage)
-            => transitionedStageName = stage;
+        private readonly CompositeDisposable disposables = new CompositeDisposable();
 
         [UnitySetUp]
         public IEnumerator InitializeAsync() => UniTask.ToCoroutine(async () =>
@@ -32,20 +29,29 @@ namespace Extreal.Core.StageNavigation.Test
 
             var provider = Object.FindObjectOfType<StageConfigProvider>();
             stageNavigator = new StageNavigator<StageName, SceneName>(provider.StageConfig);
-            stageNavigator.OnStageTransitioning += OnStageTransitioning;
-            stageNavigator.OnStageTransitioned += OnStageTransitioned;
 
-            transitioningStageName = StageName.Unused;
-            transitionedStageName = StageName.Unused;
+            _ = stageNavigator.OnStageTransitioning
+                .Subscribe(stage => transitioningStageName = stage)
+                .AddTo(disposables);
+
+            _ = stageNavigator.OnStageTransitioned
+                .Subscribe(stage => transitionedStageName = stage)
+                .AddTo(disposables);
+
+            transitioningStageName = default;
+            transitionedStageName = default;
         });
 
         [UnityTearDown]
         public IEnumerator DisposeAsync() => UniTask.ToCoroutine(async () =>
         {
-            stageNavigator.OnStageTransitioning -= OnStageTransitioning;
-            stageNavigator.OnStageTransitioned -= OnStageTransitioned;
+            disposables.Clear();
             await UniTask.Yield();
         });
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+            => disposables.Dispose();
 
         [Test]
         public void InvalidConfig()
