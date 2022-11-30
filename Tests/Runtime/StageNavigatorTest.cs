@@ -28,7 +28,7 @@ namespace Extreal.Core.StageNavigation.Test
         {
             LoggingManager.Initialize(logLevel: LogLevel.Debug);
 
-            await SceneManager.LoadSceneAsync("TestStageNavigatorScene");
+            await SceneManager.LoadSceneAsync("Main");
 
             var provider = Object.FindObjectOfType<StageConfigProvider>();
             stageNavigator = new StageNavigator<StageName, SceneName>(provider.StageConfig);
@@ -76,11 +76,11 @@ namespace Extreal.Core.StageNavigation.Test
         [UnityTest]
         public IEnumerator CommonScenes() => UniTask.ToCoroutine(async () =>
         {
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestPermanent.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.CommonScene.ToString()).IsValid());
 
             // Transition to FirstStage without leaving history
             await stageNavigator.TransitionAsync(StageName.FirstStage);
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestPermanent.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.CommonScene.ToString()).IsValid());
         });
 
         [UnityTest]
@@ -91,28 +91,28 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.AreEqual(StageName.FirstStage, transitioningStageName);
             Assert.AreEqual(StageName.FirstStage, transitionedStageName);
             Assert.AreEqual(4, SceneManager.sceneCount);
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestFirstStage.ToString()).IsValid());
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestFirstModal.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.FirstSpace.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.FirstScreen.ToString()).IsValid());
 
             // Transition to SecondStage without leaving history
             await stageNavigator.TransitionAsync(StageName.SecondStage);
             Assert.AreEqual(StageName.SecondStage, transitioningStageName);
             Assert.AreEqual(StageName.SecondStage, transitionedStageName);
             Assert.AreEqual(4, SceneManager.sceneCount);
-            Assert.IsFalse(SceneManager.GetSceneByName(SceneName.TestFirstStage.ToString()).IsValid());
-            Assert.IsFalse(SceneManager.GetSceneByName(SceneName.TestFirstModal.ToString()).IsValid());
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondStage.ToString()).IsValid());
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondThirdModal.ToString()).IsValid());
+            Assert.IsFalse(SceneManager.GetSceneByName(SceneName.FirstSpace.ToString()).IsValid());
+            Assert.IsFalse(SceneManager.GetSceneByName(SceneName.FirstScreen.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.SecondSpace.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.SecondThirdScreen.ToString()).IsValid());
 
             // Transition to ThirdStage without leaving history
             await stageNavigator.TransitionAsync(StageName.ThirdStage);
             Assert.AreEqual(StageName.ThirdStage, transitioningStageName);
             Assert.AreEqual(StageName.ThirdStage, transitionedStageName);
             Assert.AreEqual(5, SceneManager.sceneCount);
-            Assert.IsFalse(SceneManager.GetSceneByName(SceneName.TestSecondStage.ToString()).IsValid());
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestThirdStage.ToString()).IsValid());
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestSecondThirdModal.ToString()).IsValid());
-            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.TestThirdModal.ToString()).IsValid());
+            Assert.IsFalse(SceneManager.GetSceneByName(SceneName.SecondSpace.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.ThirdSpace.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.SecondThirdScreen.ToString()).IsValid());
+            Assert.IsTrue(SceneManager.GetSceneByName(SceneName.ThirdScreen.ToString()).IsValid());
         });
     }
 }
