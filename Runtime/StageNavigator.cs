@@ -13,7 +13,7 @@ namespace Extreal.Core.StageNavigation
     /// </summary>
     /// <typeparam name="TStage">Enum for stage names.</typeparam>
     /// <typeparam name="TScene">Enum for scene names.</typeparam>
-    public class StageNavigator<TStage, TScene>
+    public class StageNavigator<TStage, TScene> : IDisposable
         where TStage : struct
         where TScene : struct
     {
@@ -63,6 +63,15 @@ namespace Extreal.Core.StageNavigation
             {
                 _ = SceneManager.LoadSceneAsync(commonScene.ToString(), LoadSceneMode.Additive);
             }
+        }
+
+        /// <summary>
+        /// Dispose StageNavigator.
+        /// </summary>
+        public void Dispose()
+        {
+            onStageTransitioning.Dispose();
+            onStageTransitioned.Dispose();
         }
 
         /// <summary>
