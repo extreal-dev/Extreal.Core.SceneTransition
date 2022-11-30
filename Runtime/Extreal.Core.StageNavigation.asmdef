@@ -3,7 +3,8 @@
     "rootNamespace": "Extreal.Core.StageNavigation",
     "references": [
         "Extreal.Core.Logging",
-        "UniTask"
+        "UniTask",
+        "UniRx"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

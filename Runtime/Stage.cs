@@ -5,10 +5,10 @@ using UnityEngine;
 namespace Extreal.Core.StageNavigation
 {
     /// <summary>
-    /// Class for a stage
+    /// Class for a stage.
     /// </summary>
-    /// <typeparam name="TStage">Enum for stage names</typeparam>
-    /// <typeparam name="TScene">Enum for scene names</typeparam>
+    /// <typeparam name="TStage">Enum for stage names.</typeparam>
+    /// <typeparam name="TScene">Enum for scene names.</typeparam>
     [Serializable]
     public class Stage<TStage, TScene>
         where TStage : struct
@@ -17,7 +17,14 @@ namespace Extreal.Core.StageNavigation
         [SerializeField] private TStage stageName;
         [SerializeField] private List<TScene> sceneNames;
 
+        /// <summary>
+        /// Stage name to be set.
+        /// </summary>
         public TStage StageName => stageName;
+
+        /// <summary>
+        /// Stage names included in this stage.
+        /// </summary>
         public List<TScene> SceneNames => sceneNames;
     }
 }

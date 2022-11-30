@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Extreal.Core.Logging;
+using UniRx;
 using UnityEngine.SceneManagement;
 
 namespace Extreal.Core.StageNavigation
 {
     /// <summary>
-    /// Class used to transition stages
+    /// Class used to transition stages.
     /// </summary>
-    /// <typeparam name="TStage">Enum for stage names</typeparam>
-    /// <typeparam name="TScene">Enum for scene names</typeparam>
+    /// <typeparam name="TStage">Enum for stage names.</typeparam>
+    /// <typeparam name="TScene">Enum for scene names.</typeparam>
     public class StageNavigator<TStage, TScene>
         where TStage : struct
         where TScene : struct
@@ -20,24 +21,28 @@ namespace Extreal.Core.StageNavigation
             = LoggingManager.GetLogger(nameof(StageNavigator<TStage, TScene>));
 
         /// <summary>
-        /// Invokes just before a stage transitioning
+        /// <para>Invokes just before a stage transitioning.</para>
+        /// Arg: Stage Name to transition to.
         /// </summary>
-        public event Action<TStage> OnStageTransitioning;
+        public IObservable<TStage> OnStageTransitioning => onStageTransitioning;
+        private readonly Subject<TStage> onStageTransitioning = new Subject<TStage>();
 
         /// <summary>
-        /// Invokes immediately after a stage transitioned
+        /// <para>Invokes immediately after a stage transitioned.</para>
+        /// Arg: Stage Name to transition to.
         /// </summary>
-        public event Action<TStage> OnStageTransitioned;
+        public IObservable<TStage> OnStageTransitioned => onStageTransitioned;
+        private readonly Subject<TStage> onStageTransitioned = new Subject<TStage>();
 
         private readonly Dictionary<TStage, TScene[]> stageMap = new Dictionary<TStage, TScene[]>();
         private readonly List<TScene> loadedScenes = new List<TScene>();
 
         /// <summary>
-        /// Creates a new StageNavigator with given configuration
+        /// Creates a new StageNavigator with given configuration.
         /// </summary>
-        /// <exception cref="ArgumentNullException">If config is null</exception>
-        /// <exception cref="ArgumentException">If config contains no stages</exception>
-        /// <param name="config">Stage configuration</param>
+        /// <exception cref="ArgumentNullException">If config is null.</exception>
+        /// <exception cref="ArgumentException">If config contains no stages.</exception>
+        /// <param name="config">Stage configuration.</param>
         public StageNavigator(IStageConfig<TStage, TScene> config)
         {
             if (config == null)
@@ -61,20 +66,20 @@ namespace Extreal.Core.StageNavigation
         }
 
         /// <summary>
-        /// Transitions stage without leaving stage transition history
+        /// Transitions to the stage.
         /// </summary>
-        /// <param name="stage">Stage Name to transition to</param>
-        /// <returns>UniTask of this method</returns>
+        /// <param name="stage">Stage Name to transition to.</param>
+        /// <returns>UniTask of this method.</returns>
         public async UniTask TransitionAsync(TStage stage)
         {
             Logger.LogDebug($"Transitions to '{stage}'");
 
-            OnStageTransitioning?.Invoke(stage);
+            onStageTransitioning.OnNext(stage);
 
             await UnloadScenesAsync(stage);
             await LoadScenesAsync(stage);
 
-            OnStageTransitioned?.Invoke(stage);
+            onStageTransitioned.OnNext(stage);
         }
 
         private async UniTask UnloadScenesAsync(TStage stage)
