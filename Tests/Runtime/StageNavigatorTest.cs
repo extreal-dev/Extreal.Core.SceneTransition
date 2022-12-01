@@ -18,6 +18,7 @@ namespace Extreal.Core.StageNavigation.Test
         private StageName transitioningStageName;
         private StageName transitionedStageName;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeCracker", "CC0033")]
         private readonly CompositeDisposable disposables = new CompositeDisposable();
 
         [UnitySetUp]
@@ -46,6 +47,7 @@ namespace Extreal.Core.StageNavigation.Test
         public IEnumerator DisposeAsync() => UniTask.ToCoroutine(async () =>
         {
             disposables.Clear();
+            stageNavigator.Dispose();
             await UniTask.Yield();
         });
 
@@ -85,7 +87,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.CommonScene.ToString()).IsValid());
 
             // Transition to FirstStage without leaving history
-            await stageNavigator.TransitionAsync(StageName.FirstStage);
+            await stageNavigator.ReplaceAsync(StageName.FirstStage);
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.CommonScene.ToString()).IsValid());
         });
 
@@ -93,7 +95,7 @@ namespace Extreal.Core.StageNavigation.Test
         public IEnumerator Transition() => UniTask.ToCoroutine(async () =>
         {
             // Transition to FirstStage without leaving history
-            await stageNavigator.TransitionAsync(StageName.FirstStage);
+            await stageNavigator.ReplaceAsync(StageName.FirstStage);
             Assert.AreEqual(StageName.FirstStage, transitioningStageName);
             Assert.AreEqual(StageName.FirstStage, transitionedStageName);
             Assert.AreEqual(4, SceneManager.sceneCount);
@@ -101,7 +103,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.FirstScreen.ToString()).IsValid());
 
             // Transition to SecondStage without leaving history
-            await stageNavigator.TransitionAsync(StageName.SecondStage);
+            await stageNavigator.ReplaceAsync(StageName.SecondStage);
             Assert.AreEqual(StageName.SecondStage, transitioningStageName);
             Assert.AreEqual(StageName.SecondStage, transitionedStageName);
             Assert.AreEqual(4, SceneManager.sceneCount);
@@ -111,7 +113,7 @@ namespace Extreal.Core.StageNavigation.Test
             Assert.IsTrue(SceneManager.GetSceneByName(SceneName.SecondThirdScreen.ToString()).IsValid());
 
             // Transition to ThirdStage without leaving history
-            await stageNavigator.TransitionAsync(StageName.ThirdStage);
+            await stageNavigator.ReplaceAsync(StageName.ThirdStage);
             Assert.AreEqual(StageName.ThirdStage, transitioningStageName);
             Assert.AreEqual(StageName.ThirdStage, transitionedStageName);
             Assert.AreEqual(5, SceneManager.sceneCount);

@@ -79,7 +79,7 @@ namespace Extreal.Core.StageNavigation
         /// </summary>
         /// <param name="stage">Stage Name to transition to.</param>
         /// <returns>UniTask of this method.</returns>
-        public async UniTask TransitionAsync(TStage stage)
+        public async UniTask ReplaceAsync(TStage stage)
         {
             Logger.LogDebug($"Transitions to '{stage}'");
 
