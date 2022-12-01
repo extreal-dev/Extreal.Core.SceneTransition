@@ -6,6 +6,7 @@
         "UnityEditor.TestRunner",
         "Extreal.Core.StageNavigation",
         "UniTask",
+        "UniRx",
         "Extreal.Core.Logging"
     ],
     "includePlatforms": [],
