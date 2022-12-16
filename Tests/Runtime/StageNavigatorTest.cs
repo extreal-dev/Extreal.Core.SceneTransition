@@ -92,7 +92,7 @@ namespace Extreal.Core.StageNavigation.Test
         });
 
         [UnityTest]
-        public IEnumerator Transition() => UniTask.ToCoroutine(async () =>
+        public IEnumerator Replace() => UniTask.ToCoroutine(async () =>
         {
             // Transition to FirstStage without leaving history
             await stageNavigator.ReplaceAsync(StageName.FirstStage);
