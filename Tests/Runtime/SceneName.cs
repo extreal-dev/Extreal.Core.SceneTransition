@@ -1,4 +1,4 @@
-namespace Extreal.Core.StageNavigation.Test
+﻿namespace Extreal.Core.StageNavigation.Test
 {
     public enum SceneName
     {
