@@ -7,7 +7,9 @@
         "Extreal.Core.StageNavigation",
         "UniTask",
         "UniRx",
-        "Extreal.Core.Logging"
+        "Extreal.Core.Logging",
+        "Extreal.Core.Common",
+        "Extreal.Framework.Analyzer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
