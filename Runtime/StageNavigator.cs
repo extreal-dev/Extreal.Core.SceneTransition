@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Extreal.Core.Common.System;
 using Extreal.Core.Logging;
 using UniRx;
 using UnityEngine.SceneManagement;
@@ -13,7 +14,7 @@ namespace Extreal.Core.StageNavigation
     /// </summary>
     /// <typeparam name="TStage">Enum for stage names.</typeparam>
     /// <typeparam name="TScene">Enum for scene names.</typeparam>
-    public class StageNavigator<TStage, TScene> : IDisposable
+    public class StageNavigator<TStage, TScene> : DisposableBase
         where TStage : struct
         where TScene : struct
     {
@@ -65,10 +66,8 @@ namespace Extreal.Core.StageNavigation
             }
         }
 
-        /// <summary>
-        /// Dispose StageNavigator.
-        /// </summary>
-        public void Dispose()
+        /// <inheritdoc/>
+        protected override void ReleaseManagedResources()
         {
             onStageTransitioning.Dispose();
             onStageTransitioned.Dispose();
