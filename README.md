@@ -1,1 +1,1 @@
-# Extreal.SceneTransition
+# Extreal.Core.StageNavigation
